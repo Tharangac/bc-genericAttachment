@@ -1,0 +1,64 @@
+### Get all APIs ###
+GET {{baseurl}}/API/beta
+Authorization:Basic {{username}} {{password}}
+
+### Get all companies ###
+# @name companies
+GET {{baseurl}}/API/beta/companies
+Authorization: Basic {{username}} {{password}}
+
+### Set CompanyID ###
+@CompanyID ={{companies.response.body.value[0].id}}
+
+
+### Get all customers
+# @name customers
+GET {{baseurl}}/API/beta/companies({{CompanyID}})/customers
+Authorization: Basic {{username}} {{password}}
+
+### Set CustomerID and CustomerNo ###
+@CustomerID ={{customers.response.body.value[0].id}}
+@CustomerNo ={{customers.response.body.value[0].number}}
+
+### Get selected customer ###
+GET {{baseurl}}/API/beta/companies({{CompanyID}})/customers({{CustomerID}})
+Authorization: Basic {{username}} {{password}}
+
+### Get all attachments ###
+GET {{baseurl}}/API/tharangaC/docmgt/beta/companies({{CompanyID}})/documentAttachments
+Authorization:Basic {{username}} {{password}}
+
+### Get all attachment for the selected customer ###
+GET {{baseurl}}/API/tharangaC/docmgt/beta/companies({{CompanyID}})/documentAttachments?$filter= tableID eq 18 and no eq '{{CustomerNo}}'
+Authorization:Basic {{username}} {{password}}
+
+### Create a new attachment for the selected customer ###
+# @name attachments
+POST {{baseurl}}/API/tharangaC/docmgt/beta/companies({{CompanyID}})/documentAttachments
+Authorization:Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+	"tableID" : 18,
+	"no" : "10000",
+	"fileName" : "SampleAttachment.txt",
+	"fileType" : "Other",
+	"fileExtension" : ".txt"
+}
+
+@attachmentId ={{attachments.response.body.id}}
+
+### Add content for the new attachment ###
+PATCH  {{baseurl}}/API/tharangaC/docmgt/beta/companies({{CompanyID}})/documentAttachments({{attachmentId}})/fileContent
+Authorization:Basic {{username}} {{password}}
+Content-Type: application/json
+If-Match: *
+
+{
+ "Tharanga"
+}
+
+### Get content of the new attachment ###
+GET  {{baseurl}}/API/tharangaC/docmgt/beta/companies({{CompanyID}})/documentAttachments({{attachmentId}})/fileContent
+Authorization:Basic {{username}} {{password}}
+Content-Type: application/json
